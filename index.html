@@ -1,39 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f5f3ed"><meta name="description" content="Seedshop — crop seeds and practical support for growers.">
-<title>Seedshop — Quality seeds for growers</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7f1"><meta name="description" content="Seedshop — carefully selected crop seeds, clear product information and practical support for growers.">
+<title>Seedshop — Seeds for the season ahead</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="commerce.css"><link rel="stylesheet" href="storefront.css">
 </head>
 <body>
-<div class="announcement">A GOOD SEASON STARTS WITH A GOOD SEED <span>✳</span> LET’S GROW</div>
+<div class="announcement"><span>SEEDS FOR THE SEASON AHEAD</span><span class="ann-dot">●</span><span>GROW WITH CONFIDENCE</span></div>
 <header class="header"><div class="wrap nav">
-<a class="logo" href="#home"><span class="logo-icon">s</span> seedshop<span class="logo-period">.</span></a>
-<nav><a href="shop.html">Shop seeds</a><a href="cart.html">Cart</a><a href="#approach">Our approach</a><a href="#guide">Grow guide</a></nav>
-<a class="contact-pill" href="#contact">Get in touch <span>↗</span></a>
+<a class="logo" href="index.html" aria-label="Seedshop home"><span class="logo-icon">s</span> seedshop<span class="logo-period">.</span></a>
+<nav aria-label="Main navigation"><a href="shop.html">Shop seeds</a><a href="#about">Our approach</a><a href="#field-guide">Field notes</a></nav>
+<div class="nav-actions"><a class="cart-nav" href="cart.html"><span>Cart</span><span class="cart-count" data-cart-count>0</span></a><a class="contact-pill" href="#contact">Talk to us <span>↗</span></a></div>
+<button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span></button>
 </div></header>
 <main>
-<section class="hero" id="home"><div class="wrap hero-grid">
-<div class="hero-text"><div class="eyebrow"><span></span> SEEDS FOR YOUR NEXT SEASON</div>
-<h1>Good things<br>grow from<br><em>small beginnings.</em></h1>
-<p>Choose with care. Grow with confidence. Discover crop seeds and simple, practical guidance for the season ahead.</p>
-<div class="hero-buttons"><a class="primary-btn" href="shop.html">Explore our seeds <span>↗</span></a><a class="text-btn" href="#approach">Why Seedshop <span>→</span></a></div>
-<div class="hero-bottom-note"><span>01 — MADE FOR GROWERS</span><span>SEED · SOIL · SUN</span></div></div>
-<div class="hero-image"><img src="image/sceniro.jfif" alt="Lush green agricultural field"><div class="image-tag"><b>Grow forward.</b><span>One season at a time.</span></div><div class="image-number">01 / 03</div></div>
+<section class="home-hero" id="home"><div class="wrap home-hero-grid">
+<div class="home-hero-copy"><div class="eyebrow"><span class="eyebrow-mark"></span> GOOD SEEDS. BETTER SEASONS.</div>
+<h1>Small seeds.<br><span>Big possibility.</span></h1>
+<p>Thoughtful seed choices can make all the difference. Explore our crop selection and get practical information before you decide what to plant.</p>
+<div class="home-hero-actions"><a class="primary-btn" href="shop.html">Browse seed collection <span>↗</span></a><a class="underlined-link" href="#about">Why Seedshop <span>→</span></a></div>
+<div class="hero-micro"><span>01 / MADE FOR GROWERS</span><span>SEED · SOIL · SUN</span></div>
+</div>
+<div class="home-hero-photo"><img src="image/sceniro.jfif" alt="Green agricultural field under open sky"><div class="photo-caption"><span class="caption-icon">✳</span><div><b>Start with the right seed.</b><small>Make every season a thoughtful one.</small></div></div><span class="photo-index">FIELD JOURNAL · 001</span></div>
 </div></section>
-<div class="ticker"><div>GROW SOMETHING GOOD <span>✳</span> START WITH THE RIGHT SEED <span>✳</span> MADE FOR YOUR FIELD <span>✳</span> GROW SOMETHING GOOD <span>✳</span></div></div>
-<section class="seeds section" id="seeds"><div class="wrap"><div class="section-top"><div><div class="eyebrow">OUR SELECTION / 01</div><h2>Seeds to start<br><em>something great.</em></h2></div><p>Browse our featured crop seeds and connect with us for details, availability and choosing the right fit for your growing conditions.</p></div>
-<div class="seed-grid">
-<a class="seed-card card-rice" href="product.html?product=paddy"><div class="seed-photo"><img src="image/paddy-rice-328.jpg" alt="Rice paddy crop"><span class="seed-chip">GRAIN</span><span class="card-arrow">↗</span></div><div class="seed-info"><div class="seed-label">01 / PADDY</div><h3>Rice &amp; paddy</h3><p>Explore varieties for your field and season.</p></div></a>
-<a class="seed-card card-mustard" href="product.html?product=mustard"><div class="seed-photo"><img src="image/Mustard.png" alt="Mustard crop and seeds"><span class="seed-chip">OILSEED</span><span class="card-arrow">↗</span></div><div class="seed-info"><div class="seed-label">02 / MUSTARD</div><h3>Mustard</h3><p>Plan your oilseed crop with the right information.</p></div></a>
-<a class="seed-card card-sesame" href="product.html?product=sesame"><div class="seed-photo"><img src="image/Black%20sesame.jfif" alt="Black sesame seeds"><span class="seed-chip">OILSEED</span><span class="card-arrow">↗</span></div><div class="seed-info"><div class="seed-label">03 / SESAME</div><h3>Black sesame</h3><p>Find crop details and support for your needs.</p></div></a>
-</div><div class="browse-line"><span>LOOKING FOR A DIFFERENT CROP?</span><a href="#contact">Tell us what you need <span>↗</span></a></div></div></section>
-<section class="approach section" id="approach"><div class="wrap approach-grid"><div class="approach-visual"><img src="image/pngtree-landscape-.jpg" alt="Agricultural landscape"><div class="stamp">SEEDSHOP<br>FIELD NOTES<br>✳</div></div><div class="approach-copy"><div class="eyebrow">OUR APPROACH / 02</div><h2>More than a seed.<br><em>A better start.</em></h2><p>Every field is different. We keep seed discovery simple, with practical crop information and a human connection when you need help making a decision.</p><div class="approach-list"><div><span>01</span><b>Clear crop information</b><small>Understand the options before you choose.</small></div><div><span>02</span><b>Grower-first support</b><small>Ask questions and get pointed in the right direction.</small></div><div><span>03</span><b>Season-minded choices</b><small>Start planning with your local conditions in mind.</small></div></div><a class="primary-btn dark" href="#contact">Talk to Seedshop <span>↗</span></a></div></div></section>
-<section class="grow" id="guide"><div class="wrap grow-box"><div><div class="eyebrow">A LITTLE KNOW-HOW GOES A LONG WAY</div><h2>Plan smart.<br><em>Grow steady.</em></h2></div><div><p>Seed choice is only the beginning. Think about soil, weather, water and timing. Need a second opinion? We’re here to help you start with the right questions.</p><a class="primary-btn" href="#contact">Get crop guidance <span>↗</span></a></div></div></section>
-<section class="contact" id="contact"><div class="wrap contact-inner"><div class="eyebrow">YOUR NEXT SEASON, STARTS HERE</div><h2>Let’s grow<br><em>something good.</em></h2><p>Need seed details or help finding the right crop? Send us a note.</p><a class="primary-btn" href="shop.html">Contact Seedshop <span>↗</span></a><small>Product details and availability are confirmed directly with our team.</small></div></section>
-</main><footer><div class="wrap footer-main"><a class="logo" href="#home"><span class="logo-icon">s</span> seedshop<span class="logo-period">.</span></a><span>Better beginnings, season after season.</span><a href="#home">Back to top ↑</a></div><div class="wrap footer-meta"><span>© SEEDSHOP</span><span>SEED · SOIL · SUN</span></div></footer>
+<section class="intro-band"><div class="wrap intro-band-inner"><span>GROWER-FOCUSED SEED DISCOVERY</span><p>Clear choices, seasonal thinking, and real support when you need it.</p><span class="intro-symbol">✳</span></div></section>
+<section class="home-collection section" id="collection"><div class="wrap"><div class="collection-heading"><div><div class="eyebrow">THE COLLECTION / 01</div><h2>Find your next<br><span>crop to grow.</span></h2></div><p>Explore our current crop categories. Product varieties, pricing and stock are confirmed before purchase so you can make an informed choice.</p></div>
+<div class="collection-cards">
+<a class="collection-card" href="product.html?product=paddy"><div class="collection-image"><img src="image/paddy-rice-328.jpg" alt="Rice paddy seed crop"><span class="crop-tag">CEREAL · PADDY</span><span class="circle-arrow">↗</span></div><div class="collection-meta"><div><span class="item-number">01</span><h3>Rice &amp; Paddy</h3><p>Seed options for your rice-growing season.</p></div><span class="item-link">Explore crop <b>→</b></span></div></a>
+<a class="collection-card" href="product.html?product=mustard"><div class="collection-image"><img src="image/Mustard.png" alt="Mustard crop"><span class="crop-tag">OILSEED · MUSTARD</span><span class="circle-arrow">↗</span></div><div class="collection-meta"><div><span class="item-number">02</span><h3>Mustard</h3><p>Plan your oilseed crop with clear information.</p></div><span class="item-link">Explore crop <b>→</b></span></div></a>
+<a class="collection-card" href="product.html?product=sesame"><div class="collection-image"><img src="image/Black%20sesame.jfif" alt="Black sesame seeds"><span class="crop-tag">OILSEED · SESAME</span><span class="circle-arrow">↗</span></div><div class="collection-meta"><div><span class="item-number">03</span><h3>Black Sesame</h3><p>Explore sesame seed options and field fit.</p></div><span class="item-link">Explore crop <b>→</b></span></div></a>
+</div><div class="collection-footer"><span>NEED ANOTHER CROP OR VARIETY?</span><a href="#contact">Tell us what you’re looking for ↗</a></div></div></section>
+<section class="about-section section" id="about"><div class="wrap about-grid"><div class="about-photo"><img src="image/pngtree-landscape-.jpg" alt="Wide agricultural landscape"><div class="photo-note"><strong>Every field is different.</strong><span>Choose with your conditions in mind.</span></div></div><div class="about-copy"><div class="eyebrow">OUR APPROACH / 02</div><h2>Good growing<br>starts with <span>good guidance.</span></h2><p>We believe growers deserve straightforward information—not guesswork. Our goal is to make seed discovery easier and help you ask the right questions for your soil, season and crop plan.</p><div class="about-points"><div><span>01</span><div><b>Clear product details</b><small>Variety, pack size and availability confirmed.</small></div></div><div><span>02</span><div><b>Grower-first conversations</b><small>Get help choosing what fits your conditions.</small></div></div><div><span>03</span><div><b>Season-aware choices</b><small>Think about timing, water and local climate.</small></div></div></div><a class="dark-btn" href="shop.html">Explore the collection ↗</a></div></div></section>
+<section class="field-guide section" id="field-guide"><div class="wrap guide-grid"><div><div class="eyebrow">FIELD NOTES / 03</div><h2>Before you sow,<br><span>know your field.</span></h2></div><div class="guide-content"><p>Seed selection is just one part of the plan. Use these starting points to prepare—and check local agronomic advice for your crop and location.</p><div class="guide-list"><div><span>01</span><b>Season &amp; sowing window</b><p>Choose timing that fits local conditions.</p></div><div><span>02</span><b>Water &amp; soil</b><p>Consider irrigation, drainage and field type.</p></div><div><span>03</span><b>Variety &amp; pack</b><p>Confirm specifications before ordering.</p></div></div></div></div></section>
+<section class="contact-section" id="contact"><div class="wrap contact-inner"><div class="eyebrow">LET’S TALK ABOUT YOUR NEXT SEASON</div><h2>Ready to grow<br><span>something good?</span></h2><p>Tell us which crop or variety you’re looking for. We’ll help you find the next step.</p><a class="primary-btn" href="shop.html">Start with the collection ↗</a><small>Product details and availability are confirmed before an order is accepted.</small></div></section>
+</main>
+<footer class="site-footer"><div class="wrap footer-top"><a class="logo" href="#home"><span class="logo-icon">s</span> seedshop<span class="logo-period">.</span></a><p>Better beginnings, season after season.</p><a href="shop.html">Browse seeds ↗</a></div><div class="wrap footer-bottom"><span>© SEEDSHOP</span><span>SEED · SOIL · SUN</span><a href="#home">Back to top ↑</a></div></footer>
+<script src="storefront.js"></script>
 </body></html>
