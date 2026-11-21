@@ -89,8 +89,52 @@ app.post('/api/orders',(req,res)=>{
 
 app.get('/api/admin/products',admin,(_req,res)=>res.json(db.prepare('SELECT * FROM products ORDER BY name').all()));
 app.put('/api/admin/products/:id',admin,(req,res)=>{const {name,category,description='',image='',pricePaise,stock,active}=req.body||{};const validImage=image===''||(/^image\/[a-zA-Z0-9_% .-]+$/.test(image));if(!/^[a-zA-Z0-9_-]{1,80}$/.test(req.params.id)||!isText(name,150)||!isText(category,80)||typeof description!=='string'||description.length>2000||typeof image!=='string'||image.length>500||!validImage||!(pricePaise===null||(Number.isSafeInteger(pricePaise)&&pricePaise>=0))||!(stock===null||(Number.isInteger(stock)&&stock>=0))||typeof active!=='boolean')return res.status(400).json({error:'Invalid product data'});const r=db.prepare('UPDATE products SET name=?,category=?,description=?,image=?,price_paise=?,stock=?,active=?,updated_at=CURRENT_TIMESTAMP WHERE id=?').run(name.trim(),category.trim(),description,image,pricePaise,stock,active?1:0,req.params.id);if(r.changes===0)return res.status(404).json({error:'Product not found'});res.json(viewProduct(db.prepare('SELECT * FROM products WHERE id=?').get(req.params.id)));});
-app.get('/api/admin/orders',admin,(_req,res)=>res.json(db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all().map(o=>({...o,items:JSON.parse(o.items_json)}))));
-app.patch('/api/admin/orders/:id/status',admin,(req,res)=>{const allowed=['pending','confirmed','packed','shipped','completed','cancelled'];if(!allowed.includes(req.body?.status))return res.status(400).json({error:'Invalid status'});try{const update=db.transaction(()=>{const order=db.prepare('SELECT * FROM orders WHERE id=?').get(req.params.id);if(!order)return null;const wasCancelled=order.status==='cancelled',willCancel=req.body.status==='cancelled',lines=JSON.parse(order.items_json);if(!wasCancelled&&!willCancel){/* no inventory adjustment */}else if(!wasCancelled&&willCancel){for(const line of lines){db.prepare('UPDATE products SET stock=stock+?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND stock IS NOT NULL').run(line.quantity,line.productId);}}else if(wasCancelled&&!willCancel){for(const line of lines){const p=db.prepare('SELECT stock FROM products WHERE id=?').get(line.productId);if(!p||p.stock===null)continue;const r=db.prepare('UPDATE products SET stock=stock-?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND stock>=?').run(line.quantity,line.productId,line.quantity);if(!r.changes)throw new Error('STOCK_CONFLICT');}}db.prepare('UPDATE orders SET status=? WHERE id=?').run(req.body.status,req.params.id);return {id:req.params.id,status:req.body.status};});const result=update();if(!result)return res.status(404).json({error:'Order not found'});res.json(result);}catch(e){if(e.message==='STOCK_CONFLICT')return res.status(409).json({error:'Cannot reopen order: insufficient stock'});throw e;}});
+app.get('/api/admin/orders',admin,(_req,res)=>{
+ try{
+  const rows=db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all();
+  const parsed=rows.map(o=>({...o,items:JSON.parse(o.items_json)}));
+  if(parsed.some(o=>!Array.isArray(o.items)))return res.status(500).json({error:'Order data unavailable'});
+  res.json(parsed);
+ }catch{return res.status(500).json({error:'Order data unavailable'});}
+});
+const statusTransitions={
+ pending:['confirmed','cancelled'],
+ confirmed:['packed','cancelled'],
+ packed:['shipped','cancelled'],
+ shipped:['completed'],
+ completed:[],
+ cancelled:[]
+};
+app.patch('/api/admin/orders/:id/status',admin,(req,res)=>{
+ const next=req.body?.status;
+ if(!/^[A-Z0-9-]{1,40}$/.test(req.params.id)||!Object.hasOwn(statusTransitions,next))return res.status(400).json({error:'Invalid order id or status'});
+ try{
+  const update=db.transaction(()=>{
+   const order=db.prepare('SELECT * FROM orders WHERE id=?').get(req.params.id);
+   if(!order)return null;
+   if(!Object.hasOwn(statusTransitions,order.status)||!statusTransitions[order.status].includes(next))throw new Error('INVALID_TRANSITION');
+   let lines;
+   try{lines=JSON.parse(order.items_json);}catch{throw new Error('INVALID_ORDER_LINES');}
+   if(!Array.isArray(lines)||lines.some(line=>!line||! /^[a-zA-Z0-9_-]{1,80}$/.test(line.productId||'')||!Number.isInteger(line.quantity)||line.quantity<1||line.quantity>100))throw new Error('INVALID_ORDER_LINES');
+   // Inventory was deducted when the order was created. Restore it exactly once,
+   // only when cancelling before shipment. Cancelled orders cannot be reopened.
+   if(next==='cancelled'){
+    for(const line of lines){
+     db.prepare('UPDATE products SET stock=stock+?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND stock IS NOT NULL').run(line.quantity,line.productId);
+    }
+   }
+   db.prepare('UPDATE orders SET status=? WHERE id=?').run(next,req.params.id);
+   return {id:req.params.id,status:next};
+  });
+  const result=update();
+  if(!result)return res.status(404).json({error:'Order not found'});
+  res.json(result);
+ }catch(e){
+  if(e.message==='INVALID_TRANSITION')return res.status(409).json({error:'This order status transition is not allowed.'});
+  if(e.message==='INVALID_ORDER_LINES')return res.status(409).json({error:'Order data is corrupted; no changes were made.'});
+  console.error(e);return res.status(500).json({error:'Unable to update order status.'});
+ }
+});
 
 app.use((err,_req,res,_next)=>{if(err?.type==='entity.too.large')return res.status(413).json({error:'Request body too large'});if(err instanceof SyntaxError&&err.status===400)return res.status(400).json({error:'Invalid JSON body'});if(err.message==='Origin blocked by CORS')return res.status(403).json({error:'Origin blocked by CORS'});console.error(err);res.status(500).json({error:'Server error'});});
 app.listen(port,()=>console.log('Seedshop backend listening on localhost:'+port+' (not deployed)'));
