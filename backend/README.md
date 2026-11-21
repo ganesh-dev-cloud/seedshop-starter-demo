@@ -1,5 +1,9 @@
 # Seedshop backend (not deployed)
 
+## API key protection
+`ADMIN_API_KEY` must only be set in the backend's private environment (`.env` locally or a hosting secret manager). Never add it to frontend code, GitHub Pages, commits, screenshots, or customer requests. The tracked `.env.example` is only a dummy placeholder. `.env`, `data/`, and SQLite files are gitignored. CORS is not authentication; admin routes validate the key on the server. Keep the key secret and rotate it if exposed.
+
+
 This backend is scaffolding for local development. It is **not live**, is not deployed, and is not connected to the GitHub Pages storefront.
 
 ## Run locally
