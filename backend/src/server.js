@@ -16,8 +16,34 @@ db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
 app.use(helmet());
-app.use(express.json({ limit: '100kb' }));
+app.use(express.json({ limit: '32kb', strict: true }));
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:8000').split(',').map(v => v.trim()).filter(Boolean);
+app.use(cors({ origin(origin, callback) { if (!origin || allowedOrigins.includes(origin)) return callback(null, true); callback(new Error('Origin blocked by CORS')); } }));
+
+// Small in-memory per-IP throttling. This protects basic abuse but resets on restart
+// and is not a substitute for a production gateway/WAF or distributed rate limiter.
+const rateBuckets = new Map();
+function rateLimit({windowMs,limit,message}) {
+ return (req,res,next)=>{
+  const now=Date.now(),ip=req.ip||req.socket.remoteAddress||'unknown';
+  for(const [key,bucket] of rateBuckets){if(bucket.resetAt<=now)rateBuckets.delete(key);}
+  let bucket=rateBuckets.get(ip);
+  if(!bucket||bucket.resetAt<=now){bucket={count:0,resetAt:now+windowMs};rateBuckets.set(ip,bucket);}
+  if(rateBuckets.size>5000){for(const [key,b] of rateBuckets){if(b.resetAt<=now)rateBuckets.delete(key);}if(rateBuckets.size>5000)return res.status(503).json({error:'Rate limiter temporarily busy'});}
+  bucket.count++;
+  res.set('RateLimit-Limit',String(limit));
+  res.set('RateLimit-Remaining',String(Math.max(0,limit-bucket.count)));
+  res.set('RateLimit-Reset',String(Math.ceil(bucket.resetAt/1000)));
+  if(bucket.count>limit){res.set('Retry-After',String(Math.ceil((bucket.resetAt-now)/1000)));return res.status(429).json({error:message});}
+  next();
+ };
+}
+const apiLimiter=rateLimit({windowMs:60_000,limit:120,message:'Too many API requests. Please wait and retry.'});
+const orderLimiter=rateLimit({windowMs:60_000,limit:8,message:'Too many order attempts. Please wait before trying again.'});
+const adminLimiter=rateLimit({windowMs:60_000,limit:30,message:'Too many admin attempts. Please wait and retry.'});
+app.use('/api',apiLimiter);
+app.use('/api/orders',orderLimiter);
+app.use('/api/admin',adminLimiter);
 app.use(cors({ origin(origin, callback) { if (!origin || allowedOrigins.includes(origin)) return callback(null, true); callback(new Error('Origin blocked by CORS')); } }));
 
 db.exec(`
@@ -66,5 +92,5 @@ app.put('/api/admin/products/:id',admin,(req,res)=>{const {name,category,descrip
 app.get('/api/admin/orders',admin,(_req,res)=>res.json(db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all().map(o=>({...o,items:JSON.parse(o.items_json)}))));
 app.patch('/api/admin/orders/:id/status',admin,(req,res)=>{const allowed=['pending','confirmed','packed','shipped','completed','cancelled'];if(!allowed.includes(req.body?.status))return res.status(400).json({error:'Invalid status'});try{const update=db.transaction(()=>{const order=db.prepare('SELECT * FROM orders WHERE id=?').get(req.params.id);if(!order)return null;const wasCancelled=order.status==='cancelled',willCancel=req.body.status==='cancelled',lines=JSON.parse(order.items_json);if(!wasCancelled&&!willCancel){/* no inventory adjustment */}else if(!wasCancelled&&willCancel){for(const line of lines){db.prepare('UPDATE products SET stock=stock+?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND stock IS NOT NULL').run(line.quantity,line.productId);}}else if(wasCancelled&&!willCancel){for(const line of lines){const p=db.prepare('SELECT stock FROM products WHERE id=?').get(line.productId);if(!p||p.stock===null)continue;const r=db.prepare('UPDATE products SET stock=stock-?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND stock>=?').run(line.quantity,line.productId,line.quantity);if(!r.changes)throw new Error('STOCK_CONFLICT');}}db.prepare('UPDATE orders SET status=? WHERE id=?').run(req.body.status,req.params.id);return {id:req.params.id,status:req.body.status};});const result=update();if(!result)return res.status(404).json({error:'Order not found'});res.json(result);}catch(e){if(e.message==='STOCK_CONFLICT')return res.status(409).json({error:'Cannot reopen order: insufficient stock'});throw e;}});
 
-app.use((err,_req,res,_next)=>{console.error(err);res.status(500).json({error:'Server error'});});
+app.use((err,_req,res,_next)=>{if(err?.type==='entity.too.large')return res.status(413).json({error:'Request body too large'});if(err instanceof SyntaxError&&err.status===400)return res.status(400).json({error:'Invalid JSON body'});if(err.message==='Origin blocked by CORS')return res.status(403).json({error:'Origin blocked by CORS'});console.error(err);res.status(500).json({error:'Server error'});});
 app.listen(port,()=>console.log('Seedshop backend listening on localhost:'+port+' (not deployed)'));
