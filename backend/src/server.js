@@ -23,12 +23,12 @@ app.use(cors({ origin(origin, callback) { if (!origin || allowedOrigins.includes
 // Small in-memory per-IP throttling. This protects basic abuse but resets on restart
 // and is not a substitute for a production gateway/WAF or distributed rate limiter.
 const rateBuckets = new Map();
-function rateLimit({windowMs,limit,message}) {
+function rateLimit({scope,windowMs,limit,message}) {
  return (req,res,next)=>{
-  const now=Date.now(),ip=req.ip||req.socket.remoteAddress||'unknown';
+  const now=Date.now(),ip=req.ip||req.socket.remoteAddress||'unknown',keyId=scope+':'+ip;
   for(const [key,bucket] of rateBuckets){if(bucket.resetAt<=now)rateBuckets.delete(key);}
-  let bucket=rateBuckets.get(ip);
-  if(!bucket||bucket.resetAt<=now){bucket={count:0,resetAt:now+windowMs};rateBuckets.set(ip,bucket);}
+  let bucket=rateBuckets.get(keyId);
+  if(!bucket||bucket.resetAt<=now){bucket={count:0,resetAt:now+windowMs};rateBuckets.set(keyId,bucket);}
   if(rateBuckets.size>5000){for(const [key,b] of rateBuckets){if(b.resetAt<=now)rateBuckets.delete(key);}if(rateBuckets.size>5000)return res.status(503).json({error:'Rate limiter temporarily busy'});}
   bucket.count++;
   res.set('RateLimit-Limit',String(limit));
@@ -38,9 +38,9 @@ function rateLimit({windowMs,limit,message}) {
   next();
  };
 }
-const apiLimiter=rateLimit({windowMs:60_000,limit:120,message:'Too many API requests. Please wait and retry.'});
-const orderLimiter=rateLimit({windowMs:60_000,limit:8,message:'Too many order attempts. Please wait before trying again.'});
-const adminLimiter=rateLimit({windowMs:60_000,limit:30,message:'Too many admin attempts. Please wait and retry.'});
+const apiLimiter=rateLimit({scope:'api',windowMs:60_000,limit:120,message:'Too many API requests. Please wait and retry.'});
+const orderLimiter=rateLimit({scope:'orders',windowMs:60_000,limit:8,message:'Too many order attempts. Please wait before trying again.'});
+const adminLimiter=rateLimit({scope:'admin',windowMs:60_000,limit:30,message:'Too many admin attempts. Please wait and retry.'});
 app.use('/api',apiLimiter);
 app.use('/api/orders',orderLimiter);
 app.use('/api/admin',adminLimiter);
