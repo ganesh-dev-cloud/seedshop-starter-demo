@@ -1,3 +1,20 @@
 /* Store cart, checkout and admin styles */
 .commerce-page{padding-top:42px;padding-bottom:80px;min-height:65vh}.commerce-page h1{font-size:clamp(38px,6vw,68px);margin:20px 0 36px}.commerce-page h1 em{font-style:normal;color:#658c4a}.commerce-card{background:white;border:1px solid var(--line,#d9ded5);border-radius:16px;padding:22px;margin:16px 0}.cart-line{display:grid;grid-template-columns:110px 1fr auto;gap:18px;align-items:center;padding:18px 0;border-bottom:1px solid #ddd}.cart-line img{width:110px;height:90px;object-fit:cover;border-radius:10px}.cart-line h3{margin:0 0 8px;font-size:19px}.cart-line p{margin:0;color:var(--muted)}.cart-qty{display:flex;align-items:center;gap:8px}.cart-qty button,.secondary-btn{border:1px solid #ccd4cb;background:white;padding:8px 12px;border-radius:8px;cursor:pointer}.cart-total{display:flex;justify-content:space-between;align-items:center;font-size:20px;padding:20px 0}.checkout-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:28px}.checkout-form label,.admin-auth label,.admin-product label{display:block;font-size:13px;font-weight:700;margin:0 0 16px}.checkout-form input,.checkout-form textarea,.admin-auth input,.admin-product input,.admin-product textarea,.admin-product select{width:100%;padding:12px;border:1px solid #d4ddd3;border-radius:8px;background:#fff;margin-top:7px;font:inherit}.admin-product{display:grid;grid-template-columns:1fr 1fr;gap:12px}.admin-product .full{grid-column:1/-1}.admin-product button{align-self:end}.admin-order{border:1px solid #d9ded5;border-radius:12px;padding:16px;margin:12px 0;background:white}.admin-order header{display:flex;justify-content:space-between;gap:10px}.admin-order pre{white-space:pre-wrap;font:inherit;color:#536057}.commerce-page h2{margin:34px 0 16px}.status-select{padding:8px;border-radius:7px}@media(max-width:650px){.checkout-layout{grid-template-columns:1fr}.cart-line{grid-template-columns:82px 1fr}.cart-line img{width:82px;height:82px}.cart-line>div:last-child{grid-column:1/-1}.admin-product{grid-template-columns:1fr}.admin-product .full{grid-column:auto}.commerce-page{padding-top:20px}}
 .secondary-btn{display:inline-flex;margin:10px 0;padding:11px 15px;border:1px solid #cfd8ce;border-radius:7px;font-size:12px;font-weight:700;background:white;color:#213c2b}
+
+/* Commerce screens receive the same finish as the main storefront */
+.commerce-page{max-width:1240px}
+.commerce-page h1{font-family:"Manrope",sans-serif;letter-spacing:-.075em;line-height:1.03}
+.commerce-card,.admin-order{box-shadow:0 8px 22px #12271906}
+.checkout-form label,.admin-auth label,.admin-product label{font-weight:700;color:#26392c}
+.checkout-form input:focus,.checkout-form textarea:focus,.admin-auth input:focus,.admin-product input:focus,.admin-product textarea:focus,.admin-product select:focus{outline:2px solid #c9ed62;outline-offset:1px;border-color:#76984d}
+.primary-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.cart-qty button:hover,.secondary-btn:hover{background:#e9eee4}
+.admin-order{display:flex;flex-direction:column;gap:7px}
+.admin-order pre{background:#f4f6f1;border-radius:8px;padding:12px;font-size:12px}
+.admin-order header{align-items:center;flex-wrap:wrap}
+.admin-product{border-radius:12px}
+.admin-product button{grid-column:1/-1}
+.status-select{border:1px solid #d8e0d6;background:#f8faf6}
+.shop-breadcrumb{font-size:10px;color:#718075}
+@media(max-width:650px){.commerce-page h1{font-size:46px}.commerce-card{padding:16px}.cart-total{font-size:16px}.cart-qty{flex-wrap:wrap}}
